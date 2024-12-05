@@ -1,2 +1,2 @@
-https://github.com/c0def0rge/reverse-shell/blob/main/reverse-shell.py
+https://raw.githubusercontent.com/c0def0rge/reverse-shell/refs/heads/main/reverse-shell.py
 https://raw.githubusercontent.com/c0def0rge/basic-ransomware/refs/heads/main/ransomware.py
